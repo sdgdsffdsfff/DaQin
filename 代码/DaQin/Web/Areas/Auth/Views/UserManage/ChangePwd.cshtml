@@ -1,0 +1,86 @@
+﻿@using Dal;
+@using Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<RoleModel> roleListAll = ViewData["roleListAll"] as List<RoleModel>;
+    UserModel user = ViewData["user"] as UserModel;
+}
+<script type="text/javascript">
+    $(function () {
+        //初始华验证
+        SimpoValidate.init();
+    }); //end $.ready
+
+    //保存
+    function save() {
+        if (SimpoValidate.valid()) {
+            if ($("#Pwd").val() != $("#PwdSure").val()) {
+                SimpoValidate.hilight($("#Pwd"), "两次输入的新密码不相同");
+                SimpoValidate.hilight($("#PwdSure"), "两次输入的新密码不相同");
+                return;
+            }
+
+            submitForm("frm", function (data) {
+                if (data.ok) {
+                    alert("保存成功");
+                    refreshTab("");
+                }
+                else {
+                    SimpoValidate.hilight($("#oldPwd"), data.msg);
+                }
+            }, true);
+        }
+    }
+
+    //返回
+    function back() {
+        refreshTab("用户管理");
+    }
+</script>
+<div class="form-btn">
+    <input type="button" class="btn" value="关闭" onclick="back()" />
+    <input type="button" class="btn" value="保存" onclick="save()" />
+</div>
+<form id="frm" action="SaveChangePwd">
+    <div class="box-container">
+        <div class="box-title">
+            <span>基本信息</span>
+            <span style="font-weight: normal; font-size: 12px;">(带<span style="color: red;"> * </span>号项必填)</span>
+        </div>
+        <div class="box-content">
+            <input type="hidden" name="Id" value="@user.Id" />
+            <table class="table-data" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>旧密码：</span>
+                    </td>
+                    <td>
+                        <input type="password" class="input-text" id="oldPwd" name="oldPwd"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>新密码：</span>
+                    </td>
+                    <td>
+                        <input type="password" class="input-text" id="Pwd" name="Pwd"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>新密码确认：</span>
+                    </td>
+                    <td>
+                        <input type="password" class="input-text" id="PwdSure" name="PwdSure"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

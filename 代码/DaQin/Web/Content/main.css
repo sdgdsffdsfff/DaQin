@@ -1,0 +1,156 @@
+﻿/*
+ * 主页面css
+*/
+
+body
+{
+    margin: 0;
+    padding: 0;
+    font-family: 微软雅黑,雅黑;
+    font-size: 12px;
+}
+
+.main-container-top
+{
+    width: 100%;
+    height: 100%;
+    background-color: #0d686b;
+}
+
+    .main-container-top .title
+    {
+        color: #fff;
+        font-family: 微软雅黑,雅黑;
+        font-size: 25px;
+        line-height: 90px;
+        word-spacing: 5px;
+    }
+
+    .main-container-top .div-title
+    {
+        float: left;
+        padding-left: 30px;
+    }
+
+.div-menu
+{
+    font-family: 微软雅黑,雅黑;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    height: 40px;
+    background-color: #227766;
+    line-height: 40px;
+    border-bottom: solid 1px #fff;
+    cursor: pointer;
+}
+
+.ul-menu
+{
+    margin: 0;
+    padding: 0;
+}
+
+    .ul-menu li
+    {
+        font-size: 16px;
+        text-align: center;
+        line-height: 40px;
+        background-color: #0d686b;
+        border-bottom: solid 1px #fff;
+        cursor: pointer;
+        color: #fff;
+        font-family: 微软雅黑,雅黑;
+    }
+
+        .ul-menu li:hover
+        {
+            background-color: #118899;
+        }
+
+.tabs-header
+{
+    border: 0 !important;
+}
+
+.tabs-panels
+{
+    border: 0 !important;
+}
+
+.panel-body
+{
+    overflow: hidden !important;
+}
+
+.toolbar
+{
+    padding: 5px;
+}
+
+.btn
+{
+    -moz-border-radius: 3px 3px 3px 3px; /* Gecko browsers */
+    -webkit-border-radius: 3px 3px 3px 3px; /* Webkit browsers */
+    border-radius: 3px 3px 3px 3px; /* W3C syntax */
+    border: solid 1px #95b8e7;
+    background-color: #e0ecff;
+    height: 25px;
+    width: 55px;
+    line-height: 22px;
+    outline: none;
+    -moz-outline: none;
+}
+
+.div-user
+{
+    float: right;
+    color: #fff;
+    padding: 10px;
+}
+
+    .div-user a
+    {
+        color: #fff;
+    }
+
+a
+{
+    outline: none;
+    -moz-outline: none;
+}
+
+.search-container
+{
+    padding: 10px;
+}
+
+.search-container-table
+{
+    border-collapse: collapse;
+}
+
+    .search-container-table td
+    {
+        padding: 3px;
+    }
+
+    .search-container-table tr td:first-child
+    {
+        padding-left: 0;
+    }
+
+    .search-container-table tr td:nth-child(2n+1)
+    {
+        text-align: right;
+    }
+
+    .search-container-table tr td:nth-child(2n)
+    {
+        padding-right: 15px;
+    }
+
+.datagrid-header-rownumber, .datagrid-cell-rownumber
+{
+    width: 35px !important;
+}

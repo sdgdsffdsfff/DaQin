@@ -1,0 +1,527 @@
+﻿@using Dal;
+@using Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConstructModel construct = ViewData["construct"] as ConstructModel;
+}
+<link href="/Scripts/UploadifyJs/uploadify.css" rel="stylesheet" type="text/css" />
+<script src="/Scripts/UploadifyJs/swfobject.js" type="text/javascript"></script>
+<script src="/Scripts/UploadifyJs/jquery.uploadify-3.1.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        $.extend($.fn.datagrid.defaults.view, {
+            renderFooter: function (target, container, frozen) {
+                var rows = $.data(target, "datagrid").data.rows;
+                var sumArea = 0;
+                var sumCost = 0;
+                for (var i = 0; i < rows.length; i++) {
+                    sumArea += parseFloat(rows[i].Area);
+                    sumCost += parseFloat(rows[i].Area) * parseFloat(rows[i].Price);
+                }
+                var html = '<div id="detailTotal" style="margin:5px;">总面积：' + parseFloat(sumArea).toFixed(2) + ' ㎡，总价：' + parseFloat(sumCost).toFixed(2) + ' 元</div>';
+                if ($("#detailTotal").length > 0) {
+                    $("#detailTotal").replaceWith(html);
+                }
+                else {
+                    $(container).append(html);
+                }
+            }
+        });
+
+        //使用JavaScript创建数据表格
+        $('#detailList').datagrid({
+            url: '/Pro/ConstructManage/GetDetList',     //一个用以从远程站点请求数据的超链接地址。控制器/方法
+            queryParams: {
+                parentId: "@construct.Id"
+            },
+            iconCls: 'icon-save',
+            loadMsg: '数据正在加载中,请稍后.....',    //当从远程站点载入数据时,显示的一条快捷信息。
+            singleSelect: true,               //设置为true将只允许选择一行
+            fitColumns: true,                  //设置为true将自动使列适应表格宽度以防止出现水平滚动
+            striped: true,                     //设置为true将交替显示行背景
+            pagination: false,                  //设置true将在数据表格底部显示分页工具栏。
+            rownumbers: true,                  //设置为true将显示行数。
+            sortName: 'Id',                    //当数据表格初始化时以哪一列来排序。
+            sortOrder: 'asc',                  //定义排序顺序,可以是'asc'或者'desc'（正序或者倒序）。
+            idField: 'Id',                     //表明该列是一个唯一列。
+            onClickRow: detailClickRow,
+            showFooter: true,
+            frozenColumns: [[                  //跟列属性一样,但是这些列固定在左边,不会滚动。
+
+            ]],
+            columns: [[
+                { field: 'Id', title: 'ID', hidden: true },
+                {
+                    field: 'Name', title: '项目名称', width: 100, align: 'center',
+                    editor: { type: 'textbox', options: { required: true } }
+                },
+                {
+                    field: 'Region', title: '区域', width: 100, align: 'center',
+                    editor: { type: 'textbox', options: { required: true } }
+                },
+                {
+                    field: 'Area', title: '面积(㎡)', width: 100, align: 'right',
+                    editor: { type: 'numberbox', options: { min: 0, precision: 2, required: true } }
+                },
+                {
+                    field: 'Price', title: '单价(元)', width: 100, align: 'right',
+                    editor: { type: 'numberbox', options: { min: 0, precision: 2, required: true } }
+                },
+                {
+                    field: 'Model', title: '型号', width: 100, align: 'center',
+                    editor: { type: 'textbox', options: { required: true } }
+                },
+                {
+                    field: 'Spec', title: '规格', width: 100, align: 'center',
+                    editor: { type: 'textbox', options: { required: true } }
+                }
+            ]]
+        }); //end datagrid
+
+        //使用JavaScript创建数据表格
+        $('#attatchList').datagrid({
+            url: '/Pro/ConstructManage/GetAttList',     //一个用以从远程站点请求数据的超链接地址。控制器/方法
+            queryParams: {
+                parentId: "@construct.Id"
+            },
+            iconCls: 'icon-save',
+            loadMsg: '数据正在加载中,请稍后.....',    //当从远程站点载入数据时,显示的一条快捷信息。
+            singleSelect: true,               //设置为true将只允许选择一行
+            fitColumns: true,                  //设置为true将自动使列适应表格宽度以防止出现水平滚动
+            striped: true,                     //设置为true将交替显示行背景
+            pagination: false,                  //设置true将在数据表格底部显示分页工具栏。
+            rownumbers: true,                  //设置为true将显示行数。
+            sortName: 'Id',                    //当数据表格初始化时以哪一列来排序。
+            sortOrder: 'asc',                  //定义排序顺序,可以是'asc'或者'desc'（正序或者倒序）。
+            idField: 'Id',                     //表明该列是一个唯一列。
+            onClickRow: attatchClickRow,
+            frozenColumns: [[                  //跟列属性一样,但是这些列固定在左边,不会滚动。
+
+            ]],
+            columns: [[
+                { field: 'Id', title: 'ID', hidden: true },
+                {
+                    field: 'Name', title: '附件名称', width: 200, align: 'left'
+                },
+                { field: 'Url', title: '附件', hidden: true },
+                {
+                    field: 'Img', title: '附件', width: 400, align: 'left',
+                    formatter: function (value, row, index) {
+                        return '<img alt="图片" src="' + row.Url + '" style="height:200px;"/>';
+                    }
+                },
+                {
+                    field: 'operate', title: '操作', width: 100, align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a class="upload" href="javascript:void(0);" onclick="upload(' + index + ')" style="margin-right:10px;">上传</a>'
+                             + '<a href="/Pro/ConstructManage/DownloadFile?name=' + escape(row.Name) + '&url=' + escape(row.Url) + '" target="_blank">下载</a>';
+                    }
+                }
+            ]]
+        }); //end datagrid
+
+        //初始华验证
+        SimpoValidate.init();
+
+        //查看页面
+        if ("@ViewBag.isView" == "true") {
+            $(".add-btn").remove();
+            $(".sure-btn").remove();
+            $(".del-btn").remove();
+            $("input[type='button'][value='保存']").remove();
+            $("input[type='text']").each(function () {
+                $(this).replaceWith($(this).val());
+            });
+            $("select").each(function () {
+                $(this).replaceWith($(this).find("option[selected='selected']").text());
+            });
+            $("textarea").each(function () {
+                $(this).replaceWith($(this).val());
+            });
+            $('#detailList').datagrid("options").onClickRow = function () { };
+            $('#attatchList').datagrid("options").onClickRow = function () { };
+            $('#attatchList').datagrid("options").onLoadSuccess = function () {
+                $(".upload").remove();
+            };
+        }
+    }); //end $.ready
+
+    //保存
+    function save() {
+        if (SimpoValidate.valid()) {
+            if (!detailEndEditAll()) {
+                return;
+            }
+            var params = formToJson($("#frm").serializeArray());
+            var detail = $("#detailList").datagrid('getRows');
+            var attatch = $("#attatchList").datagrid('getRows');
+
+            $.ajax({
+                url: "/Pro/ConstructManage/InsertOrUpdate",
+                type: "POST",
+                data: { params: params, detail: JSON2.stringify(detail), attatch: JSON2.stringify(attatch) },
+                success: function (data) {
+                    if (data == "OK") {
+                        alert("保存成功");
+                        back();
+                    }
+                    else {
+                        alert("保存失败：" + data);
+                    }
+                }
+            });
+        }
+    }
+
+    //返回
+    function back() {
+        refreshTab("施工单");
+    }
+
+    //点击上传
+    function upload(index) {
+        $.iDialog({
+            title: '上传附件',
+            height: "150px",
+            width: "520px",
+            content: "url:/Pro/ConstructManage/Upload?index=" + index,
+            okVal: "确定",
+            ok: function () {
+                return this.content.doOK(function (data) {
+                    $('#attatchList').datagrid('updateRow', {
+                        index: data.index,
+                        row: {
+                            Name: data.name,
+                            Url: data.url
+                        }
+                    });
+                    $('#attatchList').datagrid('beginEdit', data.index);
+                }); //调用子窗口的函数
+            }
+        });
+    }
+
+    // detailList操作开始 ===================================================================================
+    //编辑行索引
+    var detailEditIndex = undefined;
+
+    //结束所有行的编辑
+    function detailEndEditAll() {
+        var rows = $("#detailList").datagrid('getRows');
+        detailEditIndex = undefined;
+        var bl = true;
+        for (var i = 0; i < rows.length; i++) {
+            if (!$('#detailList').datagrid('validateRow', i)) {
+                bl = false;
+            }
+        }
+        if (bl) {
+            for (var i = 0; i < rows.length; i++) {
+                $('#detailList').datagrid('endEdit', i);
+            }
+            $('#detailList').datagrid('reloadFooter');
+        }
+        return bl;
+    }
+
+    //结束编辑
+    function detailEndEdit() {
+        if (detailEditIndex == undefined) { return true }
+        if ($('#detailList').datagrid('validateRow', detailEditIndex)) {
+            $('#detailList').datagrid('endEdit', detailEditIndex);
+            $('#detailList').datagrid('reloadFooter');
+            detailEditIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //点击行
+    function detailClickRow(index) {
+        if (detailEditIndex != index) {
+            if (detailEndEdit()) {
+                $('#detailList').datagrid('selectRow', index)
+                .datagrid('beginEdit', index);
+                detailEditIndex = index;
+            } else {
+                $('#detailList').datagrid('selectRow', detailEditIndex);
+            }
+        }
+    }
+
+    //添加行
+    function detailAdd() {
+        if (detailEndEdit()) {
+            $('#detailList').datagrid('appendRow', {});
+            detailEditIndex = $('#detailList').datagrid('getRows').length - 1;
+            $('#detailList').datagrid('selectRow', detailEditIndex)
+                            .datagrid('beginEdit', detailEditIndex);
+        }
+    }
+
+    //删除行
+    function detailDel() {
+        if (detailEditIndex == undefined) { return }
+        $('#detailList').datagrid('cancelEdit', detailEditIndex)
+    					.datagrid('deleteRow', detailEditIndex);
+        detailEditIndex = undefined;
+    }
+
+    //临时保存
+    function detailOK() {
+        if (detailEndEditAll()) {
+            $('#detailList').datagrid('acceptChanges');
+        }
+    }
+
+    //重新查询，显示第一页
+    function loaddetailgrid(parentId) {
+        $('#detailList').datagrid('load', {
+            parentId: parentId
+        });
+        $('#detailList').datagrid('clearSelections');
+    }
+    // detailList操作结束 ===================================================================================
+
+    // attatchList操作开始 ===================================================================================
+    //编辑行索引
+    var attatchEditIndex = undefined;
+
+    //结束所有行的编辑
+    function attatchEndEditAll() {
+        var rows = $("#attatchList").datagrid('getRows');
+        attatchEditIndex = undefined;
+        var bl = true;
+        for (var i = 0; i < rows.length; i++) {
+            if (!$('#attatchList').datagrid('validateRow', i)) {
+                bl = false;
+            }
+        }
+        if (bl) {
+            for (var i = 0; i < rows.length; i++) {
+                $('#attatchList').datagrid('endEdit', i);
+            }
+        }
+        return bl;
+    }
+
+    //结束编辑
+    function attatchEndEdit() {
+        if (attatchEditIndex == undefined) { return true }
+        if ($('#attatchList').datagrid('validateRow', attatchEditIndex)) {
+            $('#attatchList').datagrid('endEdit', attatchEditIndex);
+            attatchEditIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //点击行
+    function attatchClickRow(index) {
+        if (attatchEditIndex != index) {
+            if (attatchEndEdit()) {
+                $('#attatchList').datagrid('selectRow', index)
+                .datagrid('beginEdit', index);
+                attatchEditIndex = index;
+            } else {
+                $('#attatchList').datagrid('selectRow', attatchEditIndex);
+            }
+        }
+    }
+
+    //添加行
+    function attatchAdd() {
+        //if (attatchEndEdit()) {
+        //    $('#attatchList').datagrid('appendRow', {});
+        //    attatchEditIndex = $('#attatchList').datagrid('getRows').length - 1;
+        //    $('#attatchList').datagrid('selectRow', attatchEditIndex)
+        //                    .datagrid('beginEdit', attatchEditIndex);
+        //}
+        attatchEditIndex = $('#attatchList').datagrid('getRows').length;
+        $.iDialog({
+            title: '上传附件',
+            height: "150px",
+            width: "520px",
+            content: "url:/Pro/ConstructManage/Upload?index=" + attatchEditIndex,
+            okVal: "确定",
+            ok: function () {
+                return this.content.doOK(function (data) {
+                    $('#attatchList').datagrid('appendRow', {});
+                    attatchEditIndex = $('#attatchList').datagrid('getRows').length - 1;
+                    $('#attatchList').datagrid('selectRow', attatchEditIndex)
+                                    .datagrid('beginEdit', attatchEditIndex);
+                    $('#attatchList').datagrid('updateRow', {
+                        index: data.index,
+                        row: {
+                            Name: data.name,
+                            Url: data.url
+                        }
+                    });
+                    $('#attatchList').datagrid('beginEdit', data.index);
+                }); //调用子窗口的函数
+            }
+        });
+    }
+
+    //删除行
+    function attatchDel() {
+        if (attatchEditIndex == undefined) { return }
+        $('#attatchList').datagrid('cancelEdit', attatchEditIndex)
+    					.datagrid('deleteRow', attatchEditIndex);
+        attatchEditIndex = undefined;
+    }
+
+    //临时保存
+    function attatchOK() {
+        if (attatchEndEditAll()) {
+            $('#attatchList').datagrid('acceptChanges');
+        }
+    }
+
+    //重新查询，显示第一页
+    function loadattatchgrid(parentId) {
+        $('#attatchList').datagrid('load', {
+            parentId: parentId
+        });
+        $('#attatchList').datagrid('clearSelections');
+    }
+    // attatchList操作结束 ===================================================================================
+</script>
+<div class="form-btn">
+    <input type="button" class="btn" value="返回" onclick="back()" />
+    <input type="button" class="btn" value="保存" onclick="save()" />
+</div>
+<form id="frm" action="InsertOrUpdate">
+    <div class="box-container">
+        <div class="box-title">
+            <span>基本信息</span>
+            <span style="font-weight: normal; font-size: 12px;">(带<span style="color: red;"> * </span>号项必填)</span>
+        </div>
+        <div class="box-content">
+            <input type="hidden" id="Id" name="Id" value="@construct.Id" />
+            <table class="table-data" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>单号：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <span>@construct.BillCode</span>
+                        <input type="hidden" class="input-text" id="BillCode" name="BillCode"
+                            value="@construct.BillCode" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>施工地址：</span>
+                    </td>
+                    <td colspan="2">
+                        <input type="text" class="input-text" id="Address" name="Address"
+                            value="@construct.Address" style="width: 350px;" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>客户姓名：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="CusName" name="CusName"
+                            value="@construct.CusName" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>客户电话：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="CusPhone" name="CusPhone"
+                            value="@construct.CusPhone" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>华然项目部长：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="ProMinister" name="ProMinister"
+                            value="@construct.ProMinister" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>华然项目部长电话：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="ProMinisterPhone" name="ProMinisterPhone"
+                            value="@construct.ProMinisterPhone" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>施工日期：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="ConstructDate" name="ConstructDate" readonly="readonly"
+                            onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'1900-01-01'})" value="@construct.ConstructDate" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>是否已施工：</span>
+                    </td>
+                    <td>
+                        <select id="AlreadyConstruction" name="AlreadyConstruction">
+                            <option value=""></option>
+                            <option value="0" selected="@(construct.AlreadyConstruction == "0" ? "selected" : "")">未施工</option>
+                            <option value="1" selected="@(construct.AlreadyConstruction == "1" ? "selected" : "")">已施工</option>
+                        </select>
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span>施工注意事项：</span>
+                    </td>
+                    <td colspan="3">
+                        <textarea class="input-text" id="Matters" name="Matters" style="width: 90%;">@construct.Matters</textarea>
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span>备注：</span>
+                    </td>
+                    <td colspan="3">
+                        <textarea class="input-text" id="Remarks" name="Remarks" style="width: 90%;">@construct.Remarks</textarea>
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <div class="box-container">
+        <div class="box-title" style="border-bottom: 0;">
+            <span>明细</span>
+            <a class="del-btn" href="javascript:void(0)" onclick="detailDel()">删除</a>
+            <a class="sure-btn" href="javascript:void(0)" onclick="detailOK()">确认</a>
+            <a class="add-btn" href="javascript:void(0)" onclick="detailAdd()">添加</a>
+        </div>
+        <div class="box-content" style="border-left: 0; border-top: 0; border-bottom: 0;">
+            <table id="detailList">
+            </table>
+        </div>
+    </div>
+    <div class="box-container">
+        <div class="box-title" style="border-bottom: 0;">
+            <span>明细</span>
+            <a class="del-btn" href="javascript:void(0)" onclick="attatchDel()">删除</a>
+            <a class="sure-btn" href="javascript:void(0)" onclick="attatchOK()">确认</a>
+            <a class="add-btn" href="javascript:void(0)" onclick="attatchAdd()">添加</a>
+        </div>
+        <div class="box-content" style="border-left: 0; border-top: 0; border-bottom: 0;">
+            <table id="attatchList">
+            </table>
+        </div>
+    </div>
+</form>

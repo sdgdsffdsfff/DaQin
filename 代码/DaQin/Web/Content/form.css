@@ -1,0 +1,169 @@
+﻿/*
+ * 表单页面css
+*/
+.box-container
+{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+    .box-container:first-child
+    {
+        margin-top: 36px;
+    }
+
+    .box-container:last-child
+    {
+        padding-bottom: 10px;
+    }
+
+.box-title
+{
+    background-color: #e0ecff;
+    font-weight: bold;
+    padding: 3px;
+    padding-left: 5px;
+    border: solid 1px #95b8e7;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.box-content
+{
+    border: solid 1px #95b8e7;
+    border-top: 0;
+}
+
+.form-btn
+{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    height: 25px;
+    background-color: #f2f7fe;
+    border-bottom: solid 1px #eee;
+    text-align: right;
+    position: fixed;
+    left: 0;
+    top: 0;
+    float: left;
+    width: 100%;
+    z-index: 999;
+}
+
+    .form-btn .btn:last-child
+    {
+        margin-right: 10px;
+    }
+
+.table-data
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table-data tr:first-child td
+    {
+        border-top: 0;
+    }
+
+    .table-data tr:last-child td
+    {
+        border-bottom: 0;
+    }
+
+    .table-data tr .td-title
+    {
+        padding-right: 5px;
+    }
+
+    .table-data tr td
+    {
+        padding: 3px;
+        border: solid 1px #ddd;
+        height: 30px;
+    }
+
+        .table-data tr td:first-child
+        {
+            border-left: 0;
+        }
+
+        .table-data tr td:last-child
+        {
+            border-right: 0;
+        }
+
+.td-title
+{
+    background-color: #f2f7fe;
+    width: 15%;
+    text-align: right;
+}
+
+.input-text
+{
+    -moz-box-shadow: inset 1px 1px 5px #aaa;
+    -webkit-box-shadow: inset 1px 1px 5px #aaa;
+    box-shadow: inset 1px 1px 5px #aaa;
+    width: 150px;
+    height: 23px;
+    border: solid 1px #999;
+    padding: 2px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 12px;
+    background-color: #fff;
+}
+
+select
+{
+    -moz-box-shadow: inset 1px 1px 5px #aaa;
+    -webkit-box-shadow: inset 1px 1px 5px #aaa;
+    box-shadow: inset 1px 1px 5px #aaa;
+    height: 29px;
+    border: solid 1px #999;
+    padding: 2px;
+    padding-left: 0;
+    background-color: #fff;
+}
+
+.add-btn
+{
+    background: url(/Content/images/add.gif) no-repeat;
+    padding-left: 18px;
+    float: right;
+    text-decoration: none;
+    color: #ff7300;
+    font-size: 12px;
+    line-height: 15px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.del-btn
+{
+    background: url(/Content/images/del.gif) no-repeat;
+    padding-left: 18px;
+    float: right;
+    text-decoration: none;
+    color: #ff7300;
+    font-size: 12px;
+    line-height: 15px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.sure-btn
+{
+    background: url(/Content/images/sure.gif) no-repeat;
+    padding-left: 18px;
+    float: right;
+    text-decoration: none;
+    color: #ff7300;
+    font-size: 12px;
+    line-height: 15px;
+    margin-right: 10px;
+    margin-top: 5px;
+}

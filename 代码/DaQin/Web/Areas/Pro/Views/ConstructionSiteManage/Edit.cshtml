@@ -1,0 +1,181 @@
+﻿@using Dal;
+@using Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ConstructionSiteModel constructionSite = ViewData["constructionSite"] as ConstructionSiteModel;
+}
+<script type="text/javascript">
+    $(function () {
+        //初始华验证
+        SimpoValidate.init();
+
+        //查看页面
+        if ("@ViewBag.isView" == "true") {
+            $(".add-btn").remove();
+            $(".sure-btn").remove();
+            $(".del-btn").remove();
+            $("input[type='button'][value='保存']").remove();
+            $("input[type='text']").each(function () {
+                $(this).replaceWith($(this).val());
+            });
+            $("select").each(function () {
+                $(this).replaceWith($(this).find("option[selected='selected']").text());
+            });
+            $("textarea").each(function () {
+                $(this).replaceWith($(this).val());
+            });
+        }
+    }); //end $.ready
+
+    //保存
+    function save() {
+        if (SimpoValidate.valid()) {
+            var params = formToJson($("#frm").serializeArray());
+
+            $.ajax({
+                url: "/Pro/ConstructionSiteManage/InsertOrUpdate",
+                type: "POST",
+                data: { params: params },
+                success: function (data) {
+                    if (data == "OK") {
+                        alert("保存成功");
+                        back();
+                    }
+                    else {
+                        alert("保存失败：" + data);
+                    }
+                }
+            });
+        }
+    }
+
+    //返回
+    function back() {
+        refreshTab("在建工地");
+    }
+</script>
+<div class="form-btn">
+    <input type="button" class="btn" value="返回" onclick="back()" />
+    <input type="button" class="btn" value="保存" onclick="save()" />
+</div>
+<form id="frm" action="InsertOrUpdate">
+    <div class="box-container">
+        <div class="box-title">
+            <span>基本信息</span>
+            <span style="font-weight: normal; font-size: 12px;">(带<span style="color: red;"> * </span>号项必填)</span>
+        </div>
+        <div class="box-content">
+            <input type="hidden" id="Id" name="Id" value="@constructionSite.Id" />
+            <table class="table-data" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>工程地址：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="Address" name="Address"
+                            value="@constructionSite.Address" style="width: 350px;" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span>工程地址备注：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="AddressRemarks" name="AddressRemarks"
+                            value="@constructionSite.AddressRemarks" style="width: 350px;" />
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>客户姓名：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="CusName" name="CusName"
+                            value="@constructionSite.CusName" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span>客户姓名备注：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="CusNameRemarks" name="CusNameRemarks"
+                            value="@constructionSite.CusNameRemarks" style="width: 350px;" />
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>设计师：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="Designer" name="Designer"
+                            value="@constructionSite.Designer" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span>设计师备注：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="DesignerRemarks" name="DesignerRemarks"
+                            value="@constructionSite.DesignerRemarks" style="width: 350px;" />
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>项目部长：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="ProMinister" name="ProMinister"
+                            value="@constructionSite.ProMinister" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span>项目部长备注：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="ProMinisterRemarks" name="ProMinisterRemarks"
+                            value="@constructionSite.ProMinisterRemarks" style="width: 350px;" />
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>质检员：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="Checker" name="Checker"
+                            value="@constructionSite.Checker" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span>质检员备注：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="CheckerRemarks" name="CheckerRemarks"
+                            value="@constructionSite.CheckerRemarks" style="width: 350px;" />
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>开工日期：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="StartDate" name="StartDate" readonly="readonly"
+                            onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'1900-01-01'})" value="@constructionSite.StartDate" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>竣工日期：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="EndDate" name="EndDate" readonly="readonly"
+                            onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'1900-01-01'})" value="@constructionSite.EndDate" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

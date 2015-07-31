@@ -1,0 +1,77 @@
+﻿@using Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(function () {
+        //使用JavaScript创建数据表格
+        $('#datalist').datagrid({
+            url: '/Auth/RoleManage/GetList',     //一个用以从远程站点请求数据的超链接地址。控制器/方法
+            iconCls: 'icon-save',
+            loadMsg: '数据正在加载中,请稍后.....',    //当从远程站点载入数据时,显示的一条快捷信息。
+            singleSelect: false,               //设置为true将只允许选择一行
+            fitColumns: true,                  //设置为true将自动使列适应表格宽度以防止出现水平滚动
+            striped: true,                     //设置为true将交替显示行背景
+            pagination: true,                  //设置true将在数据表格底部显示分页工具栏。
+            rownumbers: true,                  //设置为true将显示行数。
+            pagePosition: 'bottom',            //定义的分页栏的位置。可用的值有 'top','bottom','both'。
+            pageNumber: 1,                     //当设置分页属性时,初始化分页码。默认显示第几页
+            pageSize: 10,                      //当设置分页属性时,初始化每页记录数。每页记录数 
+            pageList: [10, 20],                //当设置分页属性时,初始化每页记录数列表。分页记录数数组 
+            sortName: 'Id',                    //当数据表格初始化时以哪一列来排序。
+            sortOrder: 'asc',                  //定义排序顺序,可以是'asc'或者'desc'（正序或者倒序）。
+            idField: 'Id',                     //表明该列是一个唯一列。
+            frozenColumns: [[                  //跟列属性一样,但是这些列固定在左边,不会滚动。
+                               { field: 'modelID', checkbox: true }
+            ]],
+            columns: [[
+                         { field: 'Id', title: 'ID', hidden: true },
+                         { field: 'RoleName', title: '角色名称', width: 100, align: 'center', sortable: true },
+                         { field: 'Remarks', title: '备注', width: 300, align: 'center', sortable: true }
+            ]]
+        }); //end datagrid
+
+    }); //end of $.ready
+
+    //权限
+    function rights() {
+        var row = $('#datalist').datagrid('getSelected');
+        var rows = $('#datalist').datagrid('getSelections');
+        if (!row) {
+            alert("您还没有选择记录");
+            return;
+        }
+        if (rows.length > 1) {
+            alert("只能选择一条记录");
+            return;
+        }
+
+        addTab("角色权限配置 - " + row.RoleName, "/Auth/RoleManage/RoleRights?roleId=" + row.Id);
+    }
+
+    //刷新当前页
+    function reloadgrid() {
+        $('#datalist').datagrid('reload', {
+
+        });
+        $('#datalist').datagrid('clearSelections');
+    }
+
+    //重新查询，显示第一页
+    function loadgrid() {
+        $('#datalist').datagrid('load', {
+
+        });
+        $('#datalist').datagrid('clearSelections');
+    }
+
+    //刷新
+    function refresh() {
+        reloadgrid();
+    }
+</script>
+<div class="toolbar">
+    <input class="btn" type="button" value="权限" id="btnRights" onclick="rights()" />
+</div>
+<table id="datalist" style="width: 100%;">
+</table>

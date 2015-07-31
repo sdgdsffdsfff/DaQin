@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A49FFE90-3FDE-44CC-82C2-0AC9637F80D3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Models</RootNamespace>
+    <AssemblyName>Models</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\dll\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExtModels\BillCodeModel.cs" />
+    <Compile Include="ExtModels\ConstructAttModel.cs" />
+    <Compile Include="ExtModels\ConstructDetModel.cs" />
+    <Compile Include="ExtModels\ConstructionSiteModel.cs" />
+    <Compile Include="ExtModels\ConstructModel.cs" />
+    <Compile Include="ExtModels\FollowDetModel.cs" />
+    <Compile Include="ExtModels\FollowModel.cs" />
+    <Compile Include="ExtModels\FunctionModel.cs" />
+    <Compile Include="ExtModels\MenuModel.cs" />
+    <Compile Include="ExtModels\RoleFunctionModel.cs" />
+    <Compile Include="ExtModels\RoleModel.cs" />
+    <Compile Include="ExtModels\UserModel.cs" />
+    <Compile Include="ExtModels\UserRoleModel.cs" />
+    <Compile Include="IsIdAttribute.cs" />
+    <Compile Include="Models\Pro_BillCode.cs" />
+    <Compile Include="Models\Pro_Construct.cs" />
+    <Compile Include="Models\Pro_ConstructAtt.cs" />
+    <Compile Include="Models\Pro_ConstructDet.cs" />
+    <Compile Include="Models\Pro_ConstructionSite.cs" />
+    <Compile Include="Models\Pro_Follow.cs" />
+    <Compile Include="Models\Pro_FollowDet.cs" />
+    <Compile Include="Models\Sys_Function.cs" />
+    <Compile Include="Models\Sys_Menu.cs" />
+    <Compile Include="Models\Sys_Role.cs" />
+    <Compile Include="Models\Sys_RoleFunction.cs" />
+    <Compile Include="Models\Sys_User.cs" />
+    <Compile Include="Models\Sys_UserRole.cs" />
+    <Compile Include="PagerModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

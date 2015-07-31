@@ -1,0 +1,121 @@
+﻿@using Dal;
+@using Models;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<RoleModel> roleListAll = ViewData["roleListAll"] as List<RoleModel>;
+}
+<script type="text/javascript">
+    $(function () {
+        //初始华验证
+        SimpoValidate.init();
+    }); //end $.ready
+
+    //保存
+    function save() {
+        if (SimpoValidate.valid()) {
+            if ($("#Pwd").val() != $("#PwdSure").val()) {
+                alert("两次输入的密码不相同");
+                return;
+            }
+            var params = formToJson($("#frm").serializeArray());
+
+            $.ajax({
+                url: "/Auth/UserManage/InsertOrUpdate",
+                type: "POST",
+                data: { params: params, roleId: $("#RoleId").val() },
+                success: function (data) {
+                    if (data == "OK") {
+                        alert("保存成功");
+                        back();
+                    }
+                    else {
+                        alert("保存失败：" + data);
+                    }
+                }
+            });
+        }
+    }
+
+    //返回
+    function back() {
+        refreshTab("用户管理");
+    }
+</script>
+<div class="form-btn">
+    <input type="button" class="btn" value="返回" onclick="back()" />
+    <input type="button" class="btn" value="保存" onclick="save()" />
+</div>
+<form id="frm" action="InsertOrUpdate">
+    <div class="box-container">
+        <div class="box-title">
+            <span>基本信息</span>
+            <span style="font-weight: normal; font-size: 12px;">(带<span style="color: red;"> * </span>号项必填)</span>
+        </div>
+        <div class="box-content">
+            <table class="table-data" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>用户名：</span>
+                    </td>
+                    <td style="width: 35%;">
+                        <input type="text" class="input-text" id="UserName" name="UserName"
+                            value="" />
+                        <span class="valid" msg="必填" rule="" ajaxaction="Exists?id="></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>显示名称：</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-text" id="ShowName" name="ShowName"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>密码：</span>
+                    </td>
+                    <td>
+                        <input type="password" class="input-text" id="Pwd" name="Pwd"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>密码确认：</span>
+                    </td>
+                    <td>
+                        <input type="password" class="input-text" id="PwdSure" name="PwdSure"
+                            value="" />
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>角色：</span>
+                    </td>
+                    <td colspan="3">
+                        <select id="RoleId" name="RoleId">
+                            <option value=""></option>
+                            @foreach (RoleModel item in roleListAll)
+                            {
+                                
+                                <option value="@item.Id">@item.RoleName</option>
+                            }
+                        </select>
+                        <span class="valid" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-title">
+                        <span style="color: red;">*</span><span>备注：</span>
+                    </td>
+                    <td colspan="3">
+                        <textarea type="text" class="input-text" id="Remarks" name="Remarks"
+                            value="" style="width: 90%;"></textarea>
+                        <span class="valid nullable" msg="必填" rule=""></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

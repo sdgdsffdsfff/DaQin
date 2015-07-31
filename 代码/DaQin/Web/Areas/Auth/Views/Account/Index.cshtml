@@ -1,0 +1,106 @@
+﻿@using Models;
+@using Common.Utils;
+@{
+    ViewBag.Title = "大秦管理系统";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<MenuModel> rootMenuList = ViewData["rootMenuList"] as List<MenuModel>;
+    List<MenuModel> subMenuListAll = ViewData["subMenuListAll"] as List<MenuModel>;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>大秦管理系统</title>
+    <script type="text/javascript">
+        $(function () {
+            //点击菜单分组
+            $(".div-menu").click(function () {
+                if ($(this).next("div").css("display") == "none") {
+                    $(".div-menu-content").slideUp("fast");
+                    $(this).next("div").slideDown("fast");
+                }
+            });
+
+            //点击菜单
+            $(".ul-menu").find("li").click(function () {
+                var title = $.trim($(this).text());
+                var url = $(this).attr("url");
+                addTab(title, url);
+            });
+        }); //end $.ready
+
+        //收起顶部
+        function collapseTop() {
+            $('#main-container').layout('collapse', 'north');
+            $('.layout-expand-north').find(".panel-title").text("大秦管理系统");
+        }
+
+        //退出登录
+        function loginOut() {
+            $.ajax({
+                url: "/Auth/Account/LoginOut",
+                type: "POST",
+                data: {},
+                success: function (data) {
+                    if (data == "OK") {
+                        window.location = "/";
+                    }
+                }
+            });
+        }
+
+        //修改密码
+        function changePwd() {
+            addTab("修改密码", "/Auth/UserManage/ChangePwd?id=" + "@AdminUtil.LoginUser.Id");
+        }
+    </script>
+</head>
+<body>
+    <div id="main-container" class="easyui-layout" style="width: 100%;">
+        <div data-options="region:'north',split:true,border:false" style="height: 100px;">
+            <div class="main-container-top">
+                <div class="div-title">
+                    <span class="title">大 秦 管 理 系 统</span>
+                </div>
+                <div title="收起" onclick="collapseTop()" style="float: left; width: 46px; height: 16px; position: absolute; bottom: 0; right: 50%; cursor: pointer; background-color: #e0ecff; -moz-border-radius: 3px 3px 0 0; -webkit-border-radius: 3px 3px 0 0; border-radius: 3px 3px 0 0;">
+                    <div style="float: left; margin-left: 15px; width: 16px; height: 16px; cursor: pointer; background: url('/Scripts/jquery-easyui-1.4/themes/default/images/accordion_arrows.png') no-repeat 0 0 #e0ecff;">
+                    </div>
+                </div>
+                <div class="div-user">
+                    欢迎 &nbsp;&nbsp; @AdminUtil.LoginUser.ShowName &nbsp;&nbsp; 
+                    <a href="javascript:void(0);" onclick="changePwd()">修改密码</a> &nbsp;&nbsp; 
+                    <a href="javascript:void(0);" onclick="loginOut()">退出登录</a>
+                </div>
+            </div>
+        </div>
+        <div data-options="region:'west',title:'菜单',split:true" style="width: 200px; border-left: 0; border-bottom: 0;">
+            <div style="background-color: #eee; height: 100%;">
+                @for (int i = 0; i < rootMenuList.Count; i++)
+                {
+                    List<MenuModel> subMenuList = subMenuListAll.FindAll(item => item.Id.IndexOf(rootMenuList[i].Id) == 0);
+                    string strDisp = i == 0 ? "" : "display: none;";
+                    <div class="div-menu">
+                        @rootMenuList[i].Name
+                    </div>
+                    <div class="div-menu-content" style="@(strDisp)">
+                        <ul class="ul-menu">
+                            @foreach (MenuModel subMenu in subMenuList)
+                            {
+                                <li url="@subMenu.Url">
+                                    <span>@subMenu.Name</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+        <div data-options="region:'center'" style="background: #eee; border-bottom: 0;">
+            <div id="mainTab" class="easyui-tabs" style="border: 0;" fit="true">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("#main-container").height($(window).height());
+    </script>
+</body>
+</html>
